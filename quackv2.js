@@ -240,8 +240,8 @@ async function getGoldDuckReward() {
     if (data.error_code !== "") console.log(data.error_code);
 
     if (data.data.type === 0) {
-      console.log(`Đánh Boss🐙 Hụt `);
-      const message = `#QuackQuack 🦆: ⚠️ Đánh Boss Hụt!!`
+      console.log(`Claim Boss 🐙 Failed `);
+      const message = `#QuackQuack 🦆: ⚠️ Claim Boss Failed!!`
     const url = `https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${chatid}&text=${encodeURIComponent(message)}`;
     try {
         let telegramResponse = await axios.get(url);
@@ -294,7 +294,7 @@ async function claimGoldDuck(gDuck) {
     let info = infoGoldDuck(gDuck);
     
     console.log(`Claim 🐙 ${info.amount} ${info.label}`);
-    const message = `#QuackQuack 🦆: Đánh Boss được ${info.amount} ${info.label} 
+    const message = `#QuackQuack 🦆: Claim Boss Success ${info.amount} ${info.label} 
     - Total Pepet: ${totalPepetBalance} 🐸
     - Total Egg: ${totalEggBalance} 🥚`
     const url = `https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${chatid}&text=${encodeURIComponent(message)}`;
