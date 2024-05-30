@@ -1,4 +1,4 @@
-let ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE3NjYwNCwidGltZXN0YW1wIjoxNzE3MDQ1NzgzNTAzLCJ0eXBlIjoxLCJpYXQiOjE3MTcwNDU3ODMsImV4cCI6MTcxNzY1MDU4M30.1aKIRsLVuAfvZWVS2cRy6hL9Fpn1e0kJA2dXQL9cTEg";
+let ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE3NjYwNCwidGltZXN0YW1wIjoxNzE3MDg2MjcwOTE2LCJ0eXBlIjoxLCJpYXQiOjE3MTcwODYyNzAsImV4cCI6MTcxNzY5MTA3MH0.nUsORtPUyePUMk3zQZaMo3jGIaHLJdlpE1BCTLWEQjM";
 
 let listColect = [];
 let listDuck = [];
@@ -32,7 +32,7 @@ async function getTotalEgg() {
     }, 0);
     totalPepetBalance = Math.round(totalPepetBalance * 1000000000) / 1000000000
     totalEggBalance = Math.round(totalEggBalance * 100) / 100
-    console.log(`Tổng số trứng hiện có: ${totalEggBalance}🥚`);
+    console.log(`Total Egg: \x1b[32m${totalEggBalance}\x1b[0m🥚`);
     // console.log(`-----------------------------------`);
     // data.data.data.map((item) => {
     //   if (item.symbol === "PET") console.log(`Ban dang co: ${item.balance} 🐸`);
@@ -82,7 +82,7 @@ async function getListCollectEgg() {
     // console.log(eggs);
 
     if (listColect.length > 0) {
-      console.log(`Số 🥚 có thể thu thập: ${listColect.length}`, eggs);
+      console.log(`Quantity of Egg🥚 can Collect: ${listColect.length}`, eggs);
       collect();
     }
   } catch (error) {
@@ -138,7 +138,6 @@ function getDuckToLay() {
 }
 
 async function layEgg(egg, duck) {
-   
   try {
     // console.log(`${duck.id}:${egg.id}`);
 
@@ -153,21 +152,23 @@ async function layEgg(egg, duck) {
       method: "POST",
     });
     let data = await response.json();
-    // console.log(data)
+    let egg_type = data.data.id  
 
     if (data.error_code !== "") {
       console.log(data.error_code);
       const duck = getDuckToLay();
       layEgg(egg, duck);
     } else {
-        
-    console.log(`Thu thập 1🥚 tại ổ [${egg.id}]`);
-   
      
-      listColect.shift();
-      listDuck = listDuck.filter((d) => d.id !== duck.id);
-      setTimeout(collect, 1.5e3); //Set thời gian lấy trứng là 3e3 --> 3 là số giây
-    }
+        console.log(`Collect Egg🥚 - Nest [${egg.id}] - Type_egg ${egg_type}`);
+
+        listColect.shift();
+        listDuck = listDuck.filter((d) => d.id !== duck.id);
+        setTimeout(collect, 1.5e3);  //Set thời gian lấy trứng là 3e3 --> 3 là số giây
+      }
+        
+    
+   
     
   } catch (error) {
     // console.log("layEgg error:", error);
@@ -217,6 +218,9 @@ async function getGoldDuckInfo() {
 }
 
 async function getGoldDuckReward() {
+  const axios = require('axios');
+  const TOKEN = "6815047816:AAF0LRKbD3Bw2QvpUKMpe_t2rhJd-YhxowE";
+  const chatid = "-4243510908";
   try {
     let response = await fetch(
       "https://api.quackquack.games/golden-duck/reward",
@@ -237,6 +241,14 @@ async function getGoldDuckReward() {
 
     if (data.data.type === 0) {
       console.log(`Đánh Boss🐙 Hụt `);
+      const message = `#QuackQuack 🦆: ⚠️ Đánh Boss Hụt!!`
+    const url = `https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${chatid}&text=${encodeURIComponent(message)}`;
+    try {
+        let telegramResponse = await axios.get(url);
+        
+      } catch (telegramError) {
+        console.error("Error sending message:", telegramError);
+      }
       getGoldDuckInfo();
     }
 
@@ -280,10 +292,10 @@ async function claimGoldDuck(gDuck) {
     if (data.error_code !== "") console.log(data.error_code);
 
     let info = infoGoldDuck(gDuck);
-    let finalPepet = info.amount + totalPepetBalance
+    
     console.log(`Claim 🐙 ${info.amount} ${info.label}`);
-    const message = `Quack Quack 🦆: Đánh Boss được ${info.amount} ${info.label} 
-    - Total Pepet: ${finalPepet} 🐸
+    const message = `#QuackQuack 🦆: Đánh Boss được ${info.amount} ${info.label} 
+    - Total Pepet: ${totalPepetBalance} 🐸
     - Total Egg: ${totalEggBalance} 🥚`
     const url = `https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${chatid}&text=${encodeURIComponent(message)}`;
     try {
